@@ -1,0 +1,128 @@
+package com.Practice.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.Practice.model.User;
+import com.Practice.service.UserService;
+
+@Controller
+public class UserController {
+
+	@Autowired
+	
+	private UserService userservice;
+	
+	    @GetMapping("/form")
+		public String showFrom(Model model)
+		{
+				model.addAttribute("user",new User());
+				return"form";
+		}
+	
+	
+	@PostMapping("/save")
+	public String saveUser(@ModelAttribute User user) {
+
+	    userservice.saveUser(user);
+
+	    return "redirect:/";
+	}
+}
+
+js..
+
+<script>
+function validateForm() {
+
+    let username = document.querySelector("[name='username']").value;
+    let password = document.querySelector("[name='password']").value;
+    let email = document.querySelector("[name='email']").value;
+    let contact = document.querySelector("[name='contactNo']").value;
+
+    // Username validation
+    if (username.trim() === "") {
+        alert("Username is required");
+        return false;
+    }
+
+    // Password validation
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters");
+        return false;
+    }
+
+    // Email validation
+    let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    if (!email.match(emailPattern)) {
+        alert("Enter valid email");
+        return false;
+    }
+
+    // Contact validation
+    if (contact.length !== 10 || isNaN(contact)) {
+        alert("Enter valid 10-digit contact number");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+html..
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Form</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<h2>User Registration Form</h2>
+
+<form th:action="@{users/save}" th:object="${user}" method="post">
+
+    Username: <input type="text" th:field="*{username}" /><br><br>
+
+    Full Name: <input type="text" th:field="*{fullname}" /><br><br>
+
+    Password: <input type="password" th:field="*{password}" /><br><br>
+
+    Email: <input type="email" th:field="*{email}" /><br><br>
+
+    Contact No: <input type="text" th:field="*{contactNo}" /><br><br>
+
+    Gender:
+    <input type="radio" th:field="*{gender}" value="Male"> Male
+    <input type="radio" th:field="*{gender}" value="Female"> Female
+    <br><br>
+
+    City:
+    <select th:field="*{city}">
+        <option value="Pune">Pune</option>
+        <option value="Mumbai">Mumbai</option>
+        <option value="Delhi">Delhi</option>
+    </select>
+    <br><br>
+
+    Skills:
+    <input type="checkbox" th:field="*{skills}" value="Java"> Java
+    <input type="checkbox" th:field="*{skills}" value="Spring"> Spring
+    <input type="checkbox" th:field="*{skills}" value="MongoDB"> MongoDB
+    <br><br>
+
+    Profile Photo:
+    <input type="text" th:field="*{profilePhoto}" placeholder="filename.jpg"/>
+    <br><br>
+
+    <button type="submit">Submit</button>
+
+</form>
+
+</body>
+</html>
